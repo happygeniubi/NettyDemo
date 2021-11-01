@@ -16,14 +16,21 @@ public class IoTest {
 
         String dir = "C:\\Users\\spinach\\Desktop";
         String name = "草稿.txt";
+        String target = "happygeniubi.txt";
         File file = new File(dir, name);
         //　文件流
-        FileInputStream fileInputStream = new FileInputStream(file);
+        InputStream fileInputStream = new FileInputStream(file);
 
 //        testRead(fileInputStream);
 //        testSkip(fileInputStream);
-        testReadByteArr(fileInputStream);
+//        testReadByteArr(fileInputStream);
 
+        // 会自动创建文件, 但是不会创建目录
+        OutputStream outputStream = new FileOutputStream(dir+File.separator+target);
+        // 第二个参数指的是文件重复追加(不覆盖原来的文件, 在原有的文件上追加)
+//        OutputStream outputStream = new FileOutputStream(dir+File.separator+target, true);
+//        testOut(fileInputStream, outputStream);
+        testOutBuf(fileInputStream, outputStream);
     }
 
     // 取文件里面第一个字节以及对应编码
@@ -35,6 +42,7 @@ public class IoTest {
         System.out.println(read);
         // 对应编码
         System.out.println((char) read);
+        inputStream.close();
     }
 
     // 跳过几个字节
@@ -46,6 +54,7 @@ public class IoTest {
         int read = inputStream.read();
         System.out.println(read);
         System.out.println((char) read);
+        inputStream.close();
     }
 
     // 读取定量的字节
@@ -64,5 +73,34 @@ public class IoTest {
             // 中文乱码的话需要设置一下编码规则
             // System.out.println(new String(buf, 0 ,length, StandardCharsets.UTF_8));
         }
+        inputStream.close();
+    }
+
+    // 单个字节读取
+    public static void testOut(InputStream inputStream, OutputStream outputStream) throws IOException {
+        int value = 0;
+        while( value != -1) {
+            value = inputStream.read();
+            System.out.println(value);
+            System.out.println((char)value);
+            outputStream.write(value);
+        }
+        // 最后记得关闭流
+        inputStream.close();
+        outputStream.close();
+    }
+
+    public static void testOutBuf(InputStream inputStream, OutputStream outputStream) throws IOException {
+//        byte [] buf = new byte[1024];
+        byte [] buf = new byte[inputStream.available()];
+        int length;
+        while ((length = inputStream.read(buf)) != -1) {
+            System.out.println("读取到的字节数:" + length);
+            System.out.println(new String(buf, 0 ,length));
+            outputStream.write(buf, 0, length);
+        }
+        // 最后记得关闭流
+        inputStream.close();
+        outputStream.close();
     }
 }

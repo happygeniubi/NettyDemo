@@ -1,4 +1,4 @@
-package com.happygeniubi.nettydemo.io;
+package io;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
